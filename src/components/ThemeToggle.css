@@ -1,0 +1,37 @@
+.theme-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  width: 40px; /* Fixed width */
+  height: 40px; /* Fixed height */
+  flex-shrink: 0; /* Prevent shrinking in flex container */
+}
+
+.theme-toggle-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Light mode styles */
+.light .theme-toggle-btn {
+  color: var(--text-color-dark); /* Dark icon in light mode */
+}
+
+.light .theme-toggle-btn:hover {
+  background-color: var(--border-color); /* Light grey hover */
+}
+
+/* Dark mode styles */
+.dark .theme-toggle-btn {
+  color: var(--dark-text-color-light); /* Light icon in dark mode */
+}
+
+.dark .theme-toggle-btn:hover {
+  background-color: var(--dark-primary-bg-color); /* Darker grey hover */
+}

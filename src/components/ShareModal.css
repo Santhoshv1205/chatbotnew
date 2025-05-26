@@ -1,0 +1,77 @@
+.share-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.share-modal-content {
+    background-color: var(--background-color-light); /* Or a specific modal background */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    color: var(--text-color);
+}
+
+.share-modal-content h2 {
+    margin-top: 0;
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.share-modal-content p {
+    margin-bottom: 25px;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.share-modal-content .close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--text-color-light);
+    transition: color 0.2s ease;
+}
+
+.share-modal-content .close-button:hover {
+    color: var(--primary-color);
+}
+
+.share-options button {
+    display: block;
+    width: calc(100% - 20px); /* Adjust for padding if needed */
+    padding: 12px 20px;
+    margin: 10px auto;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.share-options button:hover {
+    background-color: var(--button-hover-bg);
+    transform: translateY(-2px);
+}
+
+.share-options button:active {
+    transform: translateY(0);
+}
