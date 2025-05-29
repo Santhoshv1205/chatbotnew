@@ -6,7 +6,7 @@
   --accent-color: #4CAF50; /* A pleasant green */
   --accent-color-dark: #45a049;
   --border-color: #e0e0e0;
-  --shadow-small: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-small: 0 2px 4px rgba(0, 0, 0, 0.05); /* This variable will still exist, but not used by header/footer */
   --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.1);
   --text-color-dark: #333; /* Main text */
   --text-color-light: #666; /* Secondary text, placeholders */
@@ -24,7 +24,7 @@
   --dark-accent-color: #4CAF50; /* Keep accent same or adjust slightly for contrast */
   --dark-accent-color-dark: #45a049;
   --dark-border-color: #3e4044;
-  --dark-shadow-small: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --dark-shadow-small: 0 2px 4px rgba(0, 0, 0, 0.2); /* This variable will still exist, but not used by header/footer */
   --dark-shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.3);
   --dark-text-color-dark: #e0e0e0; /* Light text for dark background */
   --dark-text-color-light: #b0b0b0; /* Lighter secondary text */
@@ -40,6 +40,10 @@
   --header-height: 60px;
   --sidebar-width-open: 280px;
   --sidebar-width-closed: 70px;
+  /* New variable for the document file preview background */
+  --document-preview-bg: #ffe0e6; /* Pinkish background from image */
+  --document-preview-border: #ffb3c6; /* Slightly darker pink for border */
+  --document-preview-icon-color: #e91e63; /* Pink icon color */
 }
 
 /* --- Base Styles --- */
@@ -75,7 +79,11 @@ body.dark {
   --code-text-color: var(--dark-code-text-color);
   --code-header-bg: var(--dark-code-header-bg);
   --system-message-bg: var(--dark-system-message-bg);
-  --pdf-link-color: var(--dark-pdf-link-color);
+  --dark-pdf-link-color: var(--dark-pdf-link-color);
+  /* Dark mode specific for document preview */
+  --document-preview-bg: #3a2a2f; /* Darker pinkish background for dark mode */
+  --document-preview-border: #5c3a44; /* Darker border */
+  --document-preview-icon-color: #ff80ab; /* Lighter pink icon color */
 }
 
 
@@ -91,6 +99,8 @@ body.dark {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  /* Added for mobile responsiveness */
+  flex-direction: row; /* Default for larger screens */
 }
 
 /* --- Sidebar --- */
@@ -154,10 +164,11 @@ body.dark {
   flex-shrink: 0;
 }
 
+/* MODIFIED: New Chat button styles */
 .new-chat-btn {
-  background-color: var(--accent-color);
-  color: white;
-  border: none;
+  background-color: var(--primary-bg-color); /* Changed to match history item background */
+  color: var(--text-color-dark); /* Changed to match history item text color */
+  border: 1px solid var(--border-color); /* Added border for definition */
   border-radius: 20px;
   padding: 10px 20px;
   font-size: 1rem;
@@ -165,13 +176,15 @@ body.dark {
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   flex-grow: 1;
   justify-content: center;
 }
 
 .new-chat-btn:hover {
-  background-color: var(--accent-color-dark);
+  background-color: var(--border-color); /* Hover state similar to history items */
+  color: var(--text-color-dark);
+  border-color: var(--border-color);
 }
 
 .sidebar.closed .new-chat-btn .new-chat-text {
@@ -325,9 +338,7 @@ body.dark {
 }
 
 /* Removed margin-left to eliminate the gap */
-.main-chat.sidebar-shifted {
-  /* margin-left: var(--sidebar-width-open); -- REMOVED */
-}
+/* .main-chat.sidebar-shifted ruleset removed because it was empty */
 
 
 @media (max-width: 768px) {
@@ -341,14 +352,16 @@ body.dark {
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  background-color: var(--secondary-bg-color);
+  background-color: var(--primary-bg-color); /* Changed background color */
   color: var(--text-color-light);
-  box-shadow: var(--shadow-small);
+  /* REMOVED BOX-SHADOW */
+  box-shadow: none; /* Explicitly set to none to override any default */
   position: sticky;
   top: 0;
   z-index: 100;
   height: var(--header-height);
   transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  /* NO border-bottom HERE */
 }
 
 .header-toggle-sidebar-btn {
@@ -432,6 +445,7 @@ body.dark {
   display: none;
 }
 
+/* --- Initial Message Animation (Jump/Pop-up) --- */
 .initial-message {
   display: flex;
   flex-direction: column;
@@ -445,13 +459,37 @@ body.dark {
   transition: color 0.3s ease;
 }
 
+.initial-text-container {
+  opacity: 0;
+  transform: translateY(20px); /* Start 20px below its final position */
+  transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Bounce effect */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.initial-text-container.visible {
+  opacity: 1;
+  transform: translateY(0); /* Move to its final position */
+}
+
 .initial-message h1 {
   font-size: 2rem;
-  margin-top: 1rem;
+  margin-top: 0.5rem; /* Reduced top margin */
+  margin-bottom: 0.5rem; /* Added bottom margin */
   color: var(--text-color-dark);
   font-weight: 500;
   transition: color 0.3s ease;
 }
+
+/* Hiding "How can I help you today?" if it's a separate element */
+/* This assumes 'How can I help you today?' is in an element with class 'initial-greeting-question' or is directly the <p> tag inside .initial-message */
+.initial-message p { /* Targeting any <p> inside initial-message for the 'How can I help you today?' text */
+    display: none; /* Hide the element containing "How can I help you today?" */
+}
+
+/* If the "How can I help you today?" was part of the H1, you would need to change HTML */
+
 
 .chat-message {
   display: flex;
@@ -500,6 +538,7 @@ body.dark {
   margin: 0;
 }
 
+/* This class is now deprecated, replaced by .file-name-display-text and .file-type-label inside .file-icon-wrapper */
 .file-name-display {
   font-size: 0.9em;
   color: var(--text-color-light);
@@ -606,13 +645,14 @@ pre code {
 /* Chat footer (input area) */
 .chat-footer {
   padding: 15px 20px;
-  background-color: var(--secondary-bg-color);
-  border-top: 1px solid var(--border-color);
+  background-color: var(--primary-bg-color); /* Changed background color */
+  /* NO border-top HERE */
+  /* REMOVED BOX-SHADOW */
+  box-shadow: none; /* Explicitly set to none to override any default */
   display: flex;
   flex-direction: column;
   gap: 10px;
   position: relative;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
   flex-shrink: 0;
   transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   /* Add centering properties */
@@ -650,14 +690,13 @@ pre code {
   transition: color 0.3s ease;
 }
 
-.input-container textarea::-webkit-scrollbar {
-  display: none;
-}
-
+/* Set placeholder text for the input box */
 .input-container textarea::placeholder {
   color: var(--text-color-light);
   transition: color 0.3s ease;
+  content: "Message Santrix..."; /* This sets the placeholder text */
 }
+
 
 /* Updated send button styles */
 .send-button {
@@ -730,31 +769,92 @@ body.dark .send-button:disabled {
   background-color: var(--border-color); /* Subtle background hover */
 }
 
-.file-preview-active {
+/* This class is for individual file previews *before* sending */
+.file-previews-container {
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap to the next line */
+  gap: 8px; /* Space between file preview items */
+  padding: 5px 0; /* Add some vertical padding */
+  width: 100%; /* Take full width of the chat-footer */
+  max-width: 760px; /* Match input-container max-width */
+  justify-content: center; /* Center the files if they don't fill the width */
+}
+
+.file-preview-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 5px;
-  background-color: var(--bot-message-bg);
-  border-radius: 8px;
   border: 1px solid var(--border-color);
-  margin-top: 5px;
-  max-width: 250px;
-  overflow: hidden;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-.file-preview-active img,
-.file-preview-active video {
-  max-width: 50px;
-  max-height: 50px;
-  border-radius: 5px;
-  object-fit: cover;
-}
-
-.file-preview-active span {
+  border-radius: 20px; /* Rounded corners like the input field */
+  padding: 6px 12px; /* Adjusted padding for a compact look */
+  gap: 8px; /* Space between icon/text and remove button */
   font-size: 0.9rem;
   color: var(--text-color-dark);
+  position: relative;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  box-shadow: var(--shadow-small);
+}
+
+/* Specific styling for image/video previews */
+.file-preview-item.file-preview-image {
+  background-color: transparent; /* No background color for image previews */
+  border: none; /* No border for image previews */
+  padding: 0; /* No padding for image previews */
+  box-shadow: none; /* No shadow for image previews */
+}
+
+/* Specific styling for document previews */
+.file-preview-item.file-preview-document {
+  background-color: var(--document-preview-bg); /* Pinkish background */
+  border: 1px solid var(--document-preview-border); /* Pinkish border */
+  padding: 6px 12px; /* Keep padding for text content */
+  box-shadow: var(--shadow-small); /* Keep shadow */
+}
+
+
+.file-preview-item img,
+.file-preview-item video {
+  max-width: 40px; /* Smaller preview size */
+  max-height: 40px;
+  border-radius: 5px;
+  object-fit: cover;
+  flex-shrink: 0; /* Prevent shrinking */
+  /* NEW: Position image/video to the left */
+  margin-right: auto; /* Pushes content to the right if needed, but not strictly necessary with flex */
+}
+
+.file-icon-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-grow: 1; /* Allow it to take available space */
+  min-width: 0; /* Allow content to shrink */
+}
+
+.file-icon-wrapper svg {
+  width: 20px; /* Icon size */
+  height: 20px; /* Icon size */
+  color: var(--document-preview-icon-color); /* Pink icon color for documents */
+  flex-shrink: 0;
+}
+
+.file-info-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Allow text to truncate */
+}
+
+.file-name-display-text {
+  font-size: 0.9rem;
+  color: var(--text-color-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.3s ease;
+}
+
+.file-type-label {
+  font-size: 0.75rem; /* Smaller font for "Document" label */
+  color: var(--text-color-light);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -765,16 +865,25 @@ body.dark .send-button:disabled {
   background: none;
   border: none;
   color: var(--text-color-light);
-  font-size: 1.2rem;
+  font-size: 1.2rem; /* Larger 'x' */
   cursor: pointer;
-  padding: 2px 5px;
+  padding: 0; /* Remove default padding */
   line-height: 1;
   transition: color 0.2s ease;
+  flex-shrink: 0; /* Prevent shrinking */
+  width: 24px; /* Make it a clickable square */
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%; /* Make it round */
 }
 
 .remove-file-btn:hover {
-  color: #ff4d4d;
+  color: #ff4d4d; /* Red on hover */
+  background-color: rgba(255, 77, 77, 0.1); /* Light red background on hover */
 }
+
 
 /* --- ShareModal styles --- */
 .share-modal-overlay {
@@ -845,6 +954,13 @@ body.dark .send-button:disabled {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
+/* Ensure placeholder text is also visible */
+/* This rule is moved up next to the textarea::placeholder for logical grouping */
+.share-modal-textarea::placeholder {
+  color: var(--text-color-light); /* Lighter placeholder color for contrast */
+  opacity: 1; /* Ensure opacity is not 0 */
+}
+
 /* Ensure the close button is visible */
 .share-modal-close-btn {
   position: absolute;
@@ -886,12 +1002,6 @@ body.dark .send-button:disabled {
 
 .share-modal-buttons button:hover {
   background-color: var(--accent-color-dark);
-}
-
-/* Ensure placeholder text is also visible */
-.share-modal-textarea::placeholder {
-  color: var(--text-color-light); /* Lighter placeholder color for contrast */
-  opacity: 1; /* Ensure opacity is not 0 */
 }
 
 /* Dark mode specific override if needed */
@@ -971,74 +1081,167 @@ body.dark .share-modal-close-btn {
   background-color: var(--accent-color-dark); /* Using general accent dark for consistency */
 }
 
+/* --- Disclaimer Text Modification --- */
+/* Assuming the disclaimer text is within a specific class, e.g., .app-disclaimer-text */
+/* IMPORTANT: Replace '.app-disclaimer-text' with the actual class/element containing the disclaimer text in your HTML. */
+.app-disclaimer-text {
+    color: var(--text-color-light); /* Ensure text is visible in both themes */
+    font-size: 0.85rem;
+    text-align: center;
+    margin-top: 10px; /* Adjust margin as needed */
+    transition: color 0.3s ease;
+    /* Hide the original content of the element */
+    visibility: hidden;
+    position: relative; /* Essential for ::before to be positioned relative to this element */
+    height: 20px; /* Give it some height so layout doesn't collapse if original text is hidden */
+    overflow: hidden; /* Ensures original text doesn't peek if it renders in hidden space */
+}
+
+.app-disclaimer-text::before {
+    content: "Santrix can make mistakes, so double-check it"; /* The new text you want to display */
+    visibility: visible; /* Make the pseudo-element visible */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color-light); /* Ensure consistent color for the new text */
+    transition: color 0.3s ease;
+}
+
+/* Dark mode specific for disclaimer text */
+body.dark .app-disclaimer-text,
+body.dark .app-disclaimer-text::before {
+    color: var(--dark-text-color-light);
+}
+
+
 /* --- Responsive Adjustments --- */
-@media (max-width: 480px) {
+/* Add a breakpoint for larger tablets or smaller desktops if needed, e.g., 1024px */
+/* @media (max-width: 1024px) {
+    .sidebar.open {
+        width: 250px; /* Slightly smaller sidebar for tablets */
+    
+    .main-chat.sidebar-shifted {
+        margin-left: 250px; /* Adjust if sidebar width changes */
+    }
+    .input-container {
+        max-width: 650px; /* Slightly reduce max-width */
+    }
+
+
+/* Ensure the main container behaves correctly */
+.app-wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  /* Added for mobile responsiveness */
+  flex-direction: row; /* Default for larger screens */
+}
+
+@media (max-width: 768px) {
+  .app-wrapper {
+    flex-direction: row; /* Maintain row, sidebar is an overlay */
+    position: relative; /* For sidebar overlay positioning */
+  }
+
+  /* Make sure the main content fills the screen when sidebar is closed */
+  .main-chat {
+    width: 100%;
+    margin-left: 0; /* Important: No margin-left shift on mobile */
+  }
+
+  /* Ensure the chat header is well-spaced */
   .chat-header {
-    padding: 10px;
+    padding: 10px 15px; /* Slightly more padding */
   }
 
-  .header-toggle-sidebar-btn {
-    font-size: 1.3rem;
+  /* Adjust initial message size for mobile */
+  .initial-message h1 {
+    font-size: 1.6rem; /* Smaller heading */
+  }
+  .initial-message p {
+    font-size: 0.9rem;
   }
 
-  .santrix-logo {
-    height: 35px;
+  /* Message content readability */
+  .message-content {
+    max-width: 85%; /* Allow messages to take more width on small screens */
+    padding: 10px 15px;
+    font-size: 0.95rem;
   }
 
-  .chat-title {
-    font-size: 1.3rem;
-  }
-
-  .header-share-button {
-    padding: 6px 12px;
-    font-size: 0.8rem;
-  }
-
+  /* Chat footer (input area) on mobile */
   .chat-footer {
-    padding: 10px;
+    padding: 10px; /* Reduced padding */
   }
 
   .input-container {
-    padding: 6px 10px;
-    width: calc(100% - 20px); /* Adjust width for small screens */
-    max-width: none; /* Remove max-width on smaller screens */
+    padding: 8px 12px; /* Slightly smaller input padding */
+    max-width: 100%; /* Important: Allow input to take full width */
+    border-radius: 20px; /* Slightly smaller border-radius */
   }
 
   .input-container textarea {
     font-size: 0.9rem;
+    padding: 5px 0; /* Adjust vertical padding */
   }
 
-  .send-button {
+  .send-button, .file-upload-button {
+    width: 38px; /* Slightly smaller buttons */
+    height: 38px;
+  }
+  .send-button svg, .file-upload-button svg {
+    width: 22px; /* Slightly smaller icons */
+    height: 22px;
+  }
+}
+
+/* Even smaller screens (e.g., iPhone SE) */
+@media (max-width: 375px) {
+  .chat-header {
+    padding: 8px 10px;
+  }
+  .header-toggle-sidebar-btn {
+    font-size: 1.2rem;
+    margin-right: 10px;
+  }
+  .santrix-logo {
+    height: 30px;
+  }
+  .chat-title {
+    font-size: 1.2rem;
+  }
+  .header-share-button {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+  }
+  .chat-body {
+    padding: 15px;
+  }
+  .message-content {
+    max-width: 90%; /* Even more width on very small screens */
+    font-size: 0.88rem;
+  }
+  .chat-footer {
+    padding: 8px;
+  }
+  .input-container {
+    padding: 6px 10px;
+  }
+  .input-container textarea {
+    font-size: 0.85rem;
+  }
+  .send-button, .file-upload-button {
     width: 35px;
     height: 35px;
-    font-size: 1.3rem;
   }
-
-  .file-upload-button {
-    width: 35px;
-    height: 35px;
-  }
-
-  .file-upload-button svg {
+  .send-button svg, .file-upload-button svg {
     width: 20px;
     height: 20px;
-  }
-
-  .share-modal-content {
-    padding: 20px;
-  }
-
-  .share-modal-buttons button {
-    padding: 10px 20px;
-    font-size: 0.9rem;
-  }
-
-  .sidebar-header {
-    padding: 10px;
-  }
-
-  .new-chat-btn {
-    padding: 8px 15px;
-    font-size: 0.9rem;
   }
 }

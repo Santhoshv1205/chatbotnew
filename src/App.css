@@ -1,0 +1,49 @@
+/* Styles for uploaded files display */
+
+/* Image only style: small image on left corner, no text */
+.file-item-display.image-only {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.file-item-display.image-only .small-left-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+/* Document style: pinkish background with icon and file name */
+.file-item-display.document-style {
+  background-color: #fce4ec; /* Light pink background */
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  max-width: 250px;
+}
+
+.document-file-display svg {
+  stroke: #d81b60; /* Pink stroke color */
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.document-file-name {
+  color: #d81b60; /* Pink text color */
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Optional: Add hover effect for document */
+.file-item-display.document-style:hover {
+  background-color: #f8bbd0;
+  cursor: pointer;
+}
